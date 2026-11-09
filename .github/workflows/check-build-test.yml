@@ -17,11 +17,12 @@ jobs:
           distribution: 'temurin'
       - name: Accept Android SDK Licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-      - name: Build Sample Host
-        working-directory: projects/sample/maven
+      - name: Build SDK and Sample Host
         run: |
-          chmod +x gradlew
-          ./gradlew :sample-host:assembleDebug
+          chmod +x ./projects/sdk/gradlew
+          ./projects/sdk/gradlew -p projects/sdk publishToMavenLocal
+          chmod +x ./projects/sample/gradlew
+          ./projects/sample/gradlew -p projects/sample :sample-host:assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
