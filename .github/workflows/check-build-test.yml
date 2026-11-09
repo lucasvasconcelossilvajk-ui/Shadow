@@ -19,10 +19,12 @@ jobs:
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
       - name: Build SDK and Sample Host
         run: |
-          chmod +x ./projects/sdk/gradlew
-          ./projects/sdk/gradlew -p projects/sdk publishToMavenLocal
-          chmod +x ./projects/sample/gradlew
-          ./projects/sample/gradlew -p projects/sample :sample-host:assembleDebug
+          SDK_GRADLEW=$(find projects/sdk -name "gradlew" | head -n 1)
+          chmod +x "$SDK_GRADLEW"
+          "$SDK_GRADLEW" -p "$(dirname "$SDK_GRADLEW")" publishToMavenLocal
+          SAMPLE_GRADLEW=$(find projects/sample -name "gradlew" | head -n 1)
+          chmod +x "$SAMPLE_GRADLEW"
+          "$SAMPLE_GRADLEW" -p "$(dirname "$SAMPLE_GRADLEW")" :sample-host:assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
